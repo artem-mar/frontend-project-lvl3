@@ -2,12 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>Webpack App</title>
-        <style>
-            .asd {
-                
-            }
-        </style>
+        <title>RSS aggregator</title>
     </head>
     <body>
         <main>
@@ -16,11 +11,11 @@
                     <div class="col-md-10 col-lg-8 text-white">
                         <h1 class="display-3 mb-0">RSS агрегатор</h1>
                         <p class="lead">Начните читать RSS сегодня! Это легко, это красиво.</p>
-                        <form>
+                        <form action autocomplete="off">
                             <div class="row">
                                 <div class="col">
                                     <div class="form-floating text-body">
-                                    <input id="url-input" autofocus class="form-control form-control-lg" placeholder="Ссылка RSS">
+                                    <input id="url-input" autofocus required class="form-control form-control-lg" placeholder="Ссылка RSS">
                                         <label for="url-input">Ссылка RSS</label>
                                     </div>
                                 </div>
@@ -29,14 +24,13 @@
                                 </div>
                             </div>
                         </form>
-                        <p class="asd mt-2 text-secondary">Пример: https://ru.hexlet.io/lessons.rss</p>
+                        <p class="asd mt-2 mb-0 text-secondary">Пример: https://ru.hexlet.io/lessons.rss</p>
+                        <p id="feedback" class="text-success small m-0 position-absolute"></p>
                     </div>
                 </div>
             </section>
             <section class="container-fluid">
-                
             </section>
         </main>
     </body>
-    
 </html>

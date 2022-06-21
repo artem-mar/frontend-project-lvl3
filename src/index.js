@@ -1,2 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './style.css';
+import './styles/style.css';
+import init from './init.js';
+
+init();
