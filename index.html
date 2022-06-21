@@ -3,10 +3,40 @@
     <head>
         <meta charset="utf-8" />
         <title>Webpack App</title>
+        <style>
+            .asd {
+                
+            }
+        </style>
     </head>
     <body>
-        <h1>Hello world!</h1>
-        <h2>Tip: Check your console</h2>
+        <main>
+            <section class="container-fluid bg-dark text-white p-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-10 col-lg-8 text-white">
+                        <h1 class="display-3 mb-0">RSS агрегатор</h1>
+                        <p class="lead">Начните читать RSS сегодня! Это легко, это красиво.</p>
+                        <form>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-floating text-body">
+                                    <input id="url-input" autofocus class="form-control form-control-lg" placeholder="Ссылка RSS">
+                                        <label for="url-input">Ссылка RSS</label>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn btn-primary h-100 btn-lg px-sm-5">Добавить</button>
+                                </div>
+                            </div>
+                        </form>
+                        <p class="asd mt-2 text-secondary">Пример: https://ru.hexlet.io/lessons.rss</p>
+                    </div>
+                </div>
+            </section>
+            <section class="container-fluid">
+                
+            </section>
+        </main>
     </body>
     
 </html>
