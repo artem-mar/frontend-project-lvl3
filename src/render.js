@@ -1,16 +1,18 @@
 /* eslint-disable no-param-reassign */
+const classToggle = (element, className) => {
+  if (element.classList.contains(className)) {
+    element.classList.remove(className);
+  } else {
+    element.classList.add(className);
+  }
+};
+
 const render = (elements) => (path, value) => {
   switch (path) {
     case 'input.valid':
-      if (value) {
-        elements.input.classList.remove('is-invalid');
-        elements.feedback.classList.remove('text-danger');
-        elements.feedback.classList.add('text-success');
-      } else {
-        elements.input.classList.add('is-invalid');
-        elements.feedback.classList.remove('text-success');
-        elements.feedback.classList.add('text-danger');
-      }
+      classToggle(elements.input, 'is-invalid');
+      classToggle(elements.feedback, 'text-danger');
+      classToggle(elements.feedback, 'text-success');
       break;
 
     case 'input.feedback':
