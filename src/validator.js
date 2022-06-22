@@ -8,7 +8,7 @@ const validate = (url, feeds = []) => {
   // } catch {
   //   return false;
   // }
-  return schema.isValid(url);
+  return schema.validate(url);
 };
 
 export default validate;
