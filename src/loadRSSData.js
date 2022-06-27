@@ -7,8 +7,8 @@ const loadRSSData = (i18n, state, url) => {
   const newURL = `https://allorigins.hexlet.app/get?disableCache=true&url=${url}`;
 
   axios.get(newURL)
-    .then((responce) => {
-      const parsedData = RSSParse(responce);
+    .then((response) => {
+      const parsedData = RSSParse(response);
       const { feed, posts } = parsedData;
       const numberedPosts = posts.map((post) => ({ ...post, id: _.uniqueId() }));
       state.feeds.push(feed);
@@ -27,8 +27,8 @@ const updatePosts = (state, url) => {
   const newURL = `https://allorigins.hexlet.app/get?disableCache=true&url=${url}`;
   const iter = () => {
     axios.get(newURL)
-      .then((responce) => {
-        const parsedData = RSSParse(responce);
+      .then((response) => {
+        const parsedData = RSSParse(response);
         const { posts } = parsedData;
         let uniquePosts = _.differenceBy(posts, state.posts, 'title');
         if (uniquePosts.length !== 0) {
