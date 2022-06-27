@@ -58,4 +58,4 @@ const init = () => {
 
 export default init;
 
-//   http://lorem-rss.herokuapp.com/feed?unit=second&interval=5
+// http://lorem-rss.herokuapp.com/feed?unit=second&interval=5

@@ -1,7 +1,7 @@
-export default (response) => {
+export default (responce) => {
   try {
     const parser = new DOMParser();
-    const parsedData = parser.parseFromString(response.data.contents, 'text/xml');
+    const parsedData = parser.parseFromString(responce.data.contents, 'text/xml');
 
     const feedTitle = parsedData.querySelector('title').textContent;
     const feedDescription = parsedData.querySelector('description').textContent;
@@ -13,14 +13,10 @@ export default (response) => {
         const description = post.querySelector('description').textContent;
         const link = post.querySelector('link').textContent;
 
-        const pubdate = post.querySelector('pubDate').textContent;
-
         return {
           title,
           description,
           link,
-
-          pubdate,
         };
       });
 
