@@ -2,6 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>RSS aggregator</title>
     </head>
     <body class="d-flex flex-column min-vh-100">
@@ -20,7 +21,7 @@
                                     </div>
                                 </div>
                                 <div class="col-auto">
-                                    <button class="btn btn-primary h-100 btn-lg px-sm-5">Добавить</button>
+                                    <button id="submit-button" class="btn btn-primary h-100 btn-lg px-sm-5">Добавить</button>
                                 </div>
                             </div>
                         </form>
@@ -29,9 +30,20 @@
                     </div>
                 </div>
             </section>
-            <section class="container-fluid">
+
+            <section class="container-fluid p-0">
+                <div class="row p-5 mx-0">
+                    <div class="col-lg-8 col-md-10 order-lg-0 order-md-1">
+                        <div id="posts" class="card border-0"></div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-10 order-lg-1 order-md-0">
+                        <div id="feeds" class="card border-0"></div>
+                    </div>
+                </div>
 
             </section>
+              
         </main>
 
         <footer class="footer p-3 mt-auto border-top bg-light">

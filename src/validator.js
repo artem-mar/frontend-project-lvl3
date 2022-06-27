@@ -1,13 +1,12 @@
 import * as yup from 'yup';
 
-const validate = (url, feeds = []) => {
+const validate = (i18n, url, feeds = []) => {
+  yup.setLocale({
+    mixed: { notOneOf: i18n.t('feedback.alreadyExists') },
+    string: { url: i18n.t('feedback.invalid') },
+  });
+
   const schema = yup.string().required().url().notOneOf(feeds);
-  // try {
-  //   schema.validateSync(url);
-  //   return true;
-  // } catch {
-  //   return false;
-  // }
   return schema.validate(url);
 };
 

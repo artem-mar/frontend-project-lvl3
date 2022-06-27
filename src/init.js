@@ -1,12 +1,14 @@
 import onChange from 'on-change';
 import i18next from 'i18next';
-import { setLocale } from 'yup';
 import validate from './validator.js';
 import render from './render.js';
 import resources from './locale/index.js';
+import { loadRSSData, updatePosts } from './loadRSSData.js';
 
 const elements = {
   input: document.querySelector('#url-input'),
+  submitButton: document.querySelector('#submit-button'),
+  form: document.querySelector('form'),
   feeds: document.querySelector('#feeds'),
   posts: document.querySelector('#posts'),
   feedback: document.querySelector('#feedback'),
@@ -14,43 +16,46 @@ const elements = {
 
 const init = () => {
   const state = {
-    input: {
-      valid: true,
-      feedback: '',
-      url: '',
-    },
+    status: null, // success, error, sending
+    feedbackMessage: '',
+    inputValid: true,
+    feedsURLs: [],
     feeds: [],
+    posts: [],
   };
-  const watchedState = onChange(state, render(elements));
 
-  const i18n = i18next.createInstance();
-  i18n.init({
-    lng: 'ru',
-    debug: false,
-    resources,
+  const i18nInstance = i18next.createInstance();
+  const promise = new Promise((resolve) => {
+    i18nInstance.init({
+      lng: 'ru',
+      debug: false,
+      resources,
+    });
+    resolve(i18nInstance);
   });
+  promise.then((i18n) => {
+    const watchedState = onChange(state, render(i18n, elements));
+    elements.form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const inputValue = elements.input.value;
 
-  setLocale({
-    mixed: { notOneOf: i18n.t('feedBack.alreadyExists') },
-    string: { url: i18n.t('feedBack.isNotUrl') },
-  });
-
-  const form = document.querySelector('form');
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const inputValue = elements.input.value;
-
-    validate(inputValue, watchedState.feeds).then((url) => {
-      watchedState.input.valid = true;
-      watchedState.feeds.push(url);
-      watchedState.input.feedback = i18n.t('feedBack.isValid');
-      form.reset();
-      elements.input.focus();
-    }).catch((err) => {
-      watchedState.input.valid = false;
-      watchedState.input.feedback = err.errors;
+      validate(i18n, inputValue, watchedState.feedsURLs)
+        .then((url) => {
+          watchedState.status = 'sending';
+          watchedState.inputValid = true;
+          loadRSSData(i18n, watchedState, url); // загружаем loadRSS
+          return url;
+        })
+        .then((url) => updatePosts(watchedState, url))
+        .catch((err) => { // обработка ошибок валидатора
+          watchedState.inputValid = false;
+          watchedState.feedbackMessage = err.errors;
+          watchedState.status = 'error';
+        });
     });
   });
 };
 
 export default init;
+
+//   http://lorem-rss.herokuapp.com/feed?unit=second&interval=5
