@@ -22,6 +22,7 @@ const init = () => {
     feedsURLs: [],
     feeds: [],
     posts: [],
+    updating: false,
   };
 
   const i18nInstance = i18next.createInstance();
@@ -35,6 +36,7 @@ const init = () => {
   });
   promise.then((i18n) => {
     const watchedState = onChange(state, render(i18n, elements));
+
     elements.form.addEventListener('submit', (e) => {
       e.preventDefault();
       const inputValue = elements.input.value;
@@ -46,7 +48,12 @@ const init = () => {
           loadRSSData(i18n, watchedState, url); // загружаем loadRSS
           return url;
         })
-        .then((url) => updatePosts(watchedState, url))
+        .then(() => { // начинаем обновлять после добавления первого URL'а
+          if (watchedState.updating === false) {
+            updatePosts(watchedState);
+            watchedState.updating = true;
+          }
+        })
         .catch((err) => { // обработка ошибок валидатора
           watchedState.inputValid = false;
           watchedState.feedbackMessage = err.errors;

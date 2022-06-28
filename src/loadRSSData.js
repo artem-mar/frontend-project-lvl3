@@ -3,12 +3,12 @@ import axios from 'axios';
 import _ from 'lodash';
 import RSSParse from './parser.js';
 
-const loadRSSData = (i18n, state, url) => {
-  const newURL = `https://allorigins.hexlet.app/get?disableCache=true&url=${url}`;
+const toProxy = (url) => `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`;
 
-  axios.get(newURL)
-    .then((responce) => {
-      const parsedData = RSSParse(responce);
+const loadRSSData = (i18n, state, url) => {
+  axios.get(toProxy(url))
+    .then((response) => {
+      const parsedData = RSSParse(response);
       const { feed, posts } = parsedData;
       const numberedPosts = posts.map((post) => ({ ...post, id: _.uniqueId() }));
       state.feeds.push(feed);
@@ -23,23 +23,22 @@ const loadRSSData = (i18n, state, url) => {
     });
 };
 
-const updatePosts = (state, url) => {
-  const newURL = `https://allorigins.hexlet.app/get?disableCache=true&url=${url}`;
+const updatePosts = (state) => {
   const iter = () => {
-    axios.get(newURL)
-      .then((responce) => {
-        const parsedData = RSSParse(responce);
+    const urls = Array.from(state.feedsURLs);
+    const promises = urls.map((url) => axios.get(toProxy(url))
+      .then((response) => {
+        const parsedData = RSSParse(response);
         const { posts } = parsedData;
         let uniquePosts = _.differenceBy(posts, state.posts, 'title');
         if (uniquePosts.length !== 0) {
           uniquePosts = uniquePosts.map((post) => ({ ...post, id: _.uniqueId() }));
           state.posts.unshift(...uniquePosts);
         }
-      });
-
-    setTimeout(iter, 5000);
+      }));
+    Promise.all(promises).finally(() => setTimeout(iter, 5000));
   };
-  iter();
+  setTimeout(iter, 5000);
 };
 
 export { loadRSSData, updatePosts };
