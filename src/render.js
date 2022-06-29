@@ -96,14 +96,14 @@ const renderPosts = (posts, elements, i18n) => {
       a.target = 'blank';
       a.href = link;
       if (!viewed) {
-        a.classList.add('fw-bold', 'link-primary');
+        a.classList.add('fw-bold');
       } else {
         a.classList.add('fw-normal', 'link-secondary');
       }
       const postButton = createPostButton(post, i18n);
       [a, postButton].forEach((el) => {
         el.addEventListener('click', () => {
-          a.classList.remove('fw-bold', 'link-primary');
+          a.classList.remove('fw-bold');
           a.classList.add('fw-normal', 'link-secondary');
           post.viewed = true;
         });
