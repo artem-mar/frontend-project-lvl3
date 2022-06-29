@@ -40,7 +40,7 @@ const init = () => {
 
     elements.form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const inputValue = elements.input.value;
+      const inputValue = elements.input.value.trim();
 
       validate(i18n, inputValue, watchedState.feedsURLs)
         .then((url) => {
