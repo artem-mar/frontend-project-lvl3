@@ -3,8 +3,8 @@ import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -13,7 +13,7 @@ const stylesHandler = 'style-loader';
 const config = {
   entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(dirname, 'dist'),
   },
   devServer: {
     open: true,
