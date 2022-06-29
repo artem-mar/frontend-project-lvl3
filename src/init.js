@@ -12,6 +12,7 @@ const elements = {
   feeds: document.querySelector('#feeds'),
   posts: document.querySelector('#posts'),
   feedback: document.querySelector('#feedback'),
+  modal: document.querySelector('#modal'),
 };
 
 const init = () => {

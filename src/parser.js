@@ -17,6 +17,7 @@ export default (responce) => {
           title,
           description,
           link,
+          viewed: false,
         };
       });
 

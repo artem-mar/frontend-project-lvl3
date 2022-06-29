@@ -6,6 +6,25 @@
         <title>RSS aggregator</title>
     </head>
     <body class="d-flex flex-column min-vh-100">
+        <!-- modal -->
+        <div id="modal" class="modal fade" aria-labelledby="modalLable" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Modal title</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <p>Modal body.</p>
+                </div>
+                <div class="modal-footer">
+                  <a type="button" target="blank" class="btn btn-primary">Читать полностью</a>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <!-- modal -->
         <main>
             <section class="container-fluid bg-dark text-white p-5">
                 <div class="row justify-content-center">
@@ -30,20 +49,17 @@
                     </div>
                 </div>
             </section>
-
+            <!-- RSS -->
             <section class="container-fluid p-0">
                 <div class="row p-5 mx-0">
                     <div class="col-lg-8 col-md-10 order-lg-0 order-md-1">
                         <div id="posts" class="card border-0"></div>
                     </div>
-
                     <div class="col-lg-4 col-md-10 order-lg-1 order-md-0">
                         <div id="feeds" class="card border-0"></div>
                     </div>
                 </div>
-
             </section>
-              
         </main>
 
         <footer class="footer p-3 mt-auto border-top bg-light">

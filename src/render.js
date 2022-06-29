@@ -53,6 +53,28 @@ const renderFeeds = (feeds, elements, i18n) => {
   elements.feeds.append(cardBody, ul);
 };
 
+const createPostButton = (post, i18n) => {
+  const {
+    title, description, link,
+  } = post;
+  const button = document.createElement('button');
+  button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+  button.textContent = i18n.t('postButton');
+  button.dataset.bsToggle = 'modal';
+  button.dataset.bsTarget = '#modal';
+
+  button.addEventListener('click', () => {
+    const modal = document.querySelector('#modal');
+    const modalTitle = modal.querySelector('.modal-title');
+    const modalDescription = modal.querySelector('.modal-body p');
+    const modalButton = modal.querySelector('a.btn-primary');
+    modalTitle.textContent = title;
+    modalDescription.textContent = description;
+    modalButton.href = link;
+  });
+  return button;
+};
+
 const renderPosts = (posts, elements, i18n) => {
   elements.posts.innerHTML = '';
   const cardBody = document.createElement('div');
@@ -64,13 +86,31 @@ const renderPosts = (posts, elements, i18n) => {
   posts.sort((a, b) => a.id - b.id)
     .forEach((post) => {
       const {
-        title, /* description, */ link, id,
+        title, link, viewed,
       } = post;
       const li = document.createElement('li');
-      li.dataset.id = id;
       li.classList.add('list-group-item', 'p-2', 'px-3', 'd-flex', 'justify-content-between', 'border-0');
-      li.innerHTML = `<a href="${link}" target="blank" class="">${title}</a>
-        <button class="btn btn-outline-primary btn-sm">${i18n.t('postButton')}</button>`;
+
+      const a = document.createElement('a');
+      a.textContent = title;
+      a.target = 'blank';
+      a.href = link;
+      if (!viewed) {
+        a.classList.add('fw-bold', 'link-primary');
+      } else {
+        a.classList.add('fw-normal', 'link-secondary');
+      }
+      const postButton = createPostButton(post, i18n);
+      [a, postButton].forEach((el) => {
+        el.addEventListener('click', () => {
+          a.classList.remove('fw-bold', 'link-primary');
+          a.classList.add('fw-normal', 'link-secondary');
+          post.viewed = true;
+        });
+      });
+
+      li.append(a);
+      li.append(postButton);
       ul.prepend(li);
     });
   elements.posts.append(cardBody, ul);
