@@ -47,7 +47,6 @@ const init = () => {
           watchedState.status = 'sending';
           watchedState.inputValid = true;
           loadRSSData(i18n, watchedState, url); // загружаем loadRSS
-          return url;
         })
         .then(() => { // начинаем обновлять после добавления первого URL'а
           if (watchedState.updating === false) {

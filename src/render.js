@@ -111,7 +111,7 @@ const renderPosts = (posts, elements, i18n) => {
 
       li.append(a);
       li.append(postButton);
-      ul.prepend(li);
+      ul.append(li);
     });
   elements.posts.append(cardBody, ul);
 };

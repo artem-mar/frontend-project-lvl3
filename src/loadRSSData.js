@@ -38,7 +38,7 @@ const updatePosts = (state) => {
       }));
     Promise.all(promises).finally(() => setTimeout(iter, 5000));
   };
-  iter();
+  setTimeout(iter, 5000);
 };
 
 export { loadRSSData, updatePosts };
