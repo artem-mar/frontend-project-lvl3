@@ -58,7 +58,7 @@ const createPostButton = (post, i18n) => {
     title, description, link,
   } = post;
   const button = document.createElement('button');
-  button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+  button.classList.add('btn', 'btn-outline-primary', 'btn-sm', 'mb-auto');
   button.textContent = i18n.t('postButton');
   button.dataset.bsToggle = 'modal';
   button.dataset.bsTarget = '#modal';
@@ -81,7 +81,7 @@ const renderPosts = (posts, elements, i18n) => {
   cardBody.classList.add('card-body');
   cardBody.innerHTML = `<h4 class="card-title h4">${i18n.t('posts')}</h4>`;
   const ul = document.createElement('ul');
-  ul.classList.add('list-group', 'fw-bold');
+  ul.classList.add('list-group');
 
   posts.sort((a, b) => a.id - b.id)
     .forEach((post) => {
@@ -89,7 +89,7 @@ const renderPosts = (posts, elements, i18n) => {
         title, link, viewed,
       } = post;
       const li = document.createElement('li');
-      li.classList.add('list-group-item', 'p-2', 'px-3', 'd-flex', 'justify-content-between', 'border-0');
+      li.classList.add('list-group-item', 'px-3', 'd-flex', 'justify-content-between', 'border-0');
 
       const a = document.createElement('a');
       a.textContent = title;
@@ -111,7 +111,7 @@ const renderPosts = (posts, elements, i18n) => {
 
       li.append(a);
       li.append(postButton);
-      ul.append(li);
+      ul.prepend(li);
     });
   elements.posts.append(cardBody, ul);
 };
@@ -139,7 +139,7 @@ const render = (i18n, elements) => (path, value) => {
       break;
 
     default:
-      break;
+      throw new Error(`Unknown state path: '${path}'!`);
   }
 };
 
