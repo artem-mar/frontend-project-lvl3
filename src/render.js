@@ -139,7 +139,7 @@ const render = (i18n, elements) => (path, value) => {
       break;
 
     default:
-      throw new Error(`Unknown state path: '${path}'!`);
+      break;
   }
 };
 
