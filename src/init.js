@@ -5,17 +5,16 @@ import render from './render.js';
 import resources from './locale/index.js';
 import { loadRSSData, updatePosts } from './loadRSSData.js';
 
-const elements = {
-  input: document.querySelector('#url-input'),
-  submitButton: document.querySelector('#submit-button'),
-  form: document.querySelector('form'),
-  feeds: document.querySelector('#feeds'),
-  posts: document.querySelector('#posts'),
-  feedback: document.querySelector('#feedback'),
-  modal: document.querySelector('#modal'),
-};
-
 const init = () => {
+  const elements = {
+    input: document.querySelector('#url-input'),
+    submitButton: document.querySelector('#submit-button'),
+    form: document.querySelector('form'),
+    feeds: document.querySelector('#feeds'),
+    posts: document.querySelector('#posts'),
+    feedback: document.querySelector('#feedback'),
+    modal: document.querySelector('#modal'),
+  };
   const state = {
     status: null, // success, error, sending
     feedbackMessage: '',
@@ -26,21 +25,19 @@ const init = () => {
     updating: false,
   };
 
-  const i18nInstance = i18next.createInstance();
-  const promise = new Promise((resolve) => {
-    i18nInstance.init({
-      lng: 'ru',
-      debug: false,
-      resources,
-    });
-    resolve(i18nInstance);
-  });
-  promise.then((i18n) => {
+  const i18n = i18next.createInstance();
+
+  i18n.init({
+    lng: 'ru',
+    debug: false,
+    resources,
+  }).then(() => {
     const watchedState = onChange(state, render(i18n, elements));
 
     elements.form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const inputValue = elements.input.value.trim();
+      const formData = new FormData(elements.form);
+      const inputValue = formData.get('url').trim();
 
       validate(i18n, inputValue, watchedState.feedsURLs)
         .then((url) => {
