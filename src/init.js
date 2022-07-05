@@ -1,23 +1,22 @@
-import onChange from 'on-change';
 import i18next from 'i18next';
+import watch from './render.js';
 import validate from './validator.js';
-import render from './render.js';
 import resources from './locale/index.js';
 import { loadRSSData, updatePosts } from './loadRSSData.js';
 
 const init = () => {
   const elements = {
+    form: document.querySelector('form'),
     input: document.querySelector('#url-input'),
     submitButton: document.querySelector('#submit-button'),
-    form: document.querySelector('form'),
+    feedback: document.querySelector('#feedback'),
     feeds: document.querySelector('#feeds'),
     posts: document.querySelector('#posts'),
-    feedback: document.querySelector('#feedback'),
     modal: document.querySelector('#modal'),
   };
   const state = {
-    status: null, // success, error, sending
-    feedbackMessage: '',
+    status: 'initializing', // success, error, sending
+    feedbackError: '',
     inputValid: true,
     feedsURLs: [],
     feeds: [],
@@ -32,18 +31,18 @@ const init = () => {
     debug: false,
     resources,
   }).then(() => {
-    const watchedState = onChange(state, render(i18n, elements));
+    const watchedState = watch(state, i18n, elements);
 
     elements.form.addEventListener('submit', (e) => {
       e.preventDefault();
       const formData = new FormData(elements.form);
       const inputValue = formData.get('url').trim();
 
-      validate(i18n, inputValue, watchedState.feedsURLs)
+      validate(inputValue, watchedState.feedsURLs)
         .then((url) => {
           watchedState.status = 'sending';
           watchedState.inputValid = true;
-          loadRSSData(i18n, watchedState, url); // загружаем loadRSS
+          loadRSSData(watchedState, url); // загружаем loadRSS
         })
         .then(() => { // начинаем обновлять после добавления первого URL'а
           if (watchedState.updating === false) {
@@ -53,7 +52,7 @@ const init = () => {
         })
         .catch((err) => { // обработка ошибок валидатора
           watchedState.inputValid = false;
-          watchedState.feedbackMessage = err.errors;
+          watchedState.feedbackError = err.message;
           watchedState.status = 'error';
         });
     });

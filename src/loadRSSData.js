@@ -5,7 +5,7 @@ import RSSParse from './parser.js';
 
 const toProxy = (url) => `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`;
 
-const loadRSSData = (i18n, state, url) => {
+const loadRSSData = (state, url) => {
   axios.get(toProxy(url))
     .then((response) => {
       const parsedData = RSSParse(response);
@@ -14,12 +14,11 @@ const loadRSSData = (i18n, state, url) => {
       state.feeds.push(feed);
       state.posts.push(...numberedPosts);
       state.status = 'success';
-      state.feedbackMessage = i18n.t('feedback.success');
       state.feedsURLs.push(url);
     })
     .catch((e) => { // обработка ошибок парсера и загрузчика
       state.status = 'error';
-      state.feedbackMessage = i18n.t(`feedback.${e.message}`);
+      state.feedbackError = e.name;
     });
 };
 

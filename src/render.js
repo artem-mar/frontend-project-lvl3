@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
+import onChange from 'on-change';
 
-const renderStatus = (value, elements) => {
+const renderStatus = (value, elements, i18n) => {
   if (value === 'sending') {
     elements.submitButton.disabled = true;
     elements.input.disabled = true;
@@ -12,6 +13,7 @@ const renderStatus = (value, elements) => {
     elements.submitButton.disabled = false;
     elements.input.disabled = false;
     elements.feedback.classList.add('text-success');
+    elements.feedback.textContent = i18n.t('feedback.success');
     elements.form.reset();
     elements.input.focus();
   }
@@ -22,8 +24,8 @@ const renderStatus = (value, elements) => {
   }
 };
 
-const renderFeedback = (value, elements) => {
-  elements.feedback.textContent = value;
+const renderFeedback = (value, elements, i18n) => {
+  elements.feedback.textContent = i18n.t(`feedback.${value}`);
 };
 const renderValid = (value, elements) => {
   if (value === true) {
@@ -45,8 +47,13 @@ const renderFeeds = (feeds, elements, i18n) => {
     const { title, description } = feed;
     const li = document.createElement('li');
     li.classList.add('list-group-item', 'p-2', 'px-3', 'border-0');
-    li.innerHTML = `<h6 class="card-title mb-0">${title}</h6>
-      <p class="small text-black-50 mb-0">${description}</p>`;
+    const titleElement = document.createElement('h6');
+    titleElement.classList.add('card-title', 'mb-0');
+    titleElement.textContent = title;
+    const descriptionElement = document.createElement('p');
+    descriptionElement.classList.add('small', 'text-black-50', 'mb-0');
+    descriptionElement.textContent = description;
+    li.append(titleElement, descriptionElement);
     ul.prepend(li);
   });
 
@@ -83,7 +90,7 @@ const renderPosts = (posts, elements, i18n) => {
   const ul = document.createElement('ul');
   ul.classList.add('list-group');
 
-  posts.sort((a, b) => a.id - b.id)
+  [...posts].sort((a, b) => a.id - b.id)
     .forEach((post) => {
       const {
         title, link, viewed,
@@ -127,15 +134,15 @@ const render = (i18n, elements) => (path, value) => {
       break;
 
     case 'status':
-      renderStatus(value, elements);
+      renderStatus(value, elements, i18n);
       break;
 
     case 'inputValid':
       renderValid(value, elements);
       break;
 
-    case 'feedbackMessage':
-      renderFeedback(value, elements);
+    case 'feedbackError':
+      renderFeedback(value, elements, i18n);
       break;
 
     default:
@@ -143,4 +150,6 @@ const render = (i18n, elements) => (path, value) => {
   }
 };
 
-export default render;
+const watch = (state, i18n, elements) => onChange(state, (render(i18n, elements)));
+
+export default watch;

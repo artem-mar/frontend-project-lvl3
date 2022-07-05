@@ -2,11 +2,11 @@ export default {
   translation: {
     feedback: {
       success: 'RSS успешно загружен',
-      invalid: 'Ссылка должна быть валидным URL',
-      alreadyExists: 'RSS уже существует',
-      notContainRSS: 'Ресурс не содержит валидный RSS',
-      shouldNotBeEmpty: 'Не должно быть пустым',
+      'invalid url': 'Ссылка должна быть валидным URL',
+      'this url already exists': 'RSS уже существует',
+      'url must not be empty': 'Не должно быть пустым',
       'Network Error': 'Ошибка сети',
+      notContainRSS: 'Ресурс не содержит валидный RSS',
 
     },
     feeds: 'Фиды',

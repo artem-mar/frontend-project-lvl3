@@ -1,11 +1,11 @@
 import * as yup from 'yup';
 
-const validate = (i18n, url, feeds = []) => {
+const validate = (url, feeds = []) => {
   yup.setLocale({
-    mixed: { notOneOf: i18n.t('feedback.alreadyExists') },
+    mixed: { notOneOf: 'this url already exists' },
     string: {
-      url: i18n.t('feedback.invalid'),
-      min: i18n.t('feedback.shouldNotBeEmpty'),
+      url: 'invalid url',
+      min: 'url must not be empty',
     },
   });
 
