@@ -1,32 +1,34 @@
-/* eslint-disable no-param-reassign */
 import onChange from 'on-change';
 
 const renderStatus = (value, elements, i18n) => {
+  const { submitButton, input, feedback } = elements;
   if (value === 'sending') {
-    elements.submitButton.disabled = true;
-    elements.input.disabled = true;
-    elements.feedback.textContent = '';
+    submitButton.disabled = true;
+    input.disabled = true;
+    feedback.textContent = '';
     elements.feedback.classList.remove('text-danger', 'text-success');
     elements.input.classList.remove('is-invalid');
   }
   if (value === 'success') {
-    elements.submitButton.disabled = false;
-    elements.input.disabled = false;
+    submitButton.disabled = false;
+    input.disabled = false;
     elements.feedback.classList.add('text-success');
-    elements.feedback.textContent = i18n.t('feedback.success');
+    feedback.textContent = i18n.t('feedback.success');
     elements.form.reset();
     elements.input.focus();
   }
   if (value === 'error') {
-    elements.submitButton.disabled = false;
-    elements.input.disabled = false;
+    submitButton.disabled = false;
+    input.disabled = false;
     elements.feedback.classList.add('text-danger');
   }
 };
 
 const renderFeedback = (value, elements, i18n) => {
-  elements.feedback.textContent = i18n.t(`feedback.${value}`);
+  const { feedback } = elements;
+  feedback.textContent = i18n.t(`feedback.${value}`);
 };
+
 const renderValid = (value, elements) => {
   if (value === true) {
     elements.input.classList.remove('is-invalid');
@@ -36,7 +38,8 @@ const renderValid = (value, elements) => {
 };
 
 const renderFeeds = (feeds, elements, i18n) => {
-  elements.feeds.innerHTML = '';
+  const { feedsContainer } = elements;
+  feedsContainer.innerHTML = '';
   const cardBody = document.createElement('div');
   cardBody.classList.add('card-body');
   cardBody.innerHTML = `<h4 class="card-title h4">${i18n.t('feeds')}</h4>`;
@@ -57,7 +60,7 @@ const renderFeeds = (feeds, elements, i18n) => {
     ul.prepend(li);
   });
 
-  elements.feeds.append(cardBody, ul);
+  feedsContainer.append(cardBody, ul);
 };
 
 const createPostButton = (post, i18n) => {
@@ -83,7 +86,8 @@ const createPostButton = (post, i18n) => {
 };
 
 const renderPosts = (posts, elements, i18n) => {
-  elements.posts.innerHTML = '';
+  const { postsContainer } = elements;
+  postsContainer.innerHTML = '';
   const cardBody = document.createElement('div');
   cardBody.classList.add('card-body');
   cardBody.innerHTML = `<h4 class="card-title h4">${i18n.t('posts')}</h4>`;
@@ -92,9 +96,8 @@ const renderPosts = (posts, elements, i18n) => {
 
   [...posts].sort((a, b) => a.id - b.id)
     .forEach((post) => {
-      const {
-        title, link, viewed,
-      } = post;
+      const { title, link } = post;
+      let { viewed } = post;
       const li = document.createElement('li');
       li.classList.add('list-group-item', 'px-3', 'd-flex', 'justify-content-between', 'border-0');
 
@@ -112,7 +115,7 @@ const renderPosts = (posts, elements, i18n) => {
         el.addEventListener('click', () => {
           a.classList.remove('fw-bold');
           a.classList.add('fw-normal', 'link-secondary');
-          post.viewed = true;
+          viewed = true;
         });
       });
 
@@ -120,10 +123,10 @@ const renderPosts = (posts, elements, i18n) => {
       li.append(postButton);
       ul.prepend(li);
     });
-  elements.posts.append(cardBody, ul);
+  postsContainer.append(cardBody, ul);
 };
 
-const render = (i18n, elements) => (path, value) => {
+const watch = (state, i18n, elements) => onChange(state, (path, value) => {
   switch (path) {
     case 'feeds':
       renderFeeds(value, elements, i18n);
@@ -148,8 +151,6 @@ const render = (i18n, elements) => (path, value) => {
     default:
       break;
   }
-};
-
-const watch = (state, i18n, elements) => onChange(state, (render(i18n, elements)));
+});
 
 export default watch;

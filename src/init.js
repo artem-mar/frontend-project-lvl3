@@ -1,8 +1,8 @@
 import i18next from 'i18next';
-import watch from './render.js';
+import watch from './watchers.js';
 import validate from './validator.js';
 import resources from './locale/index.js';
-import { loadRSSData, updatePosts } from './loadRSSData.js';
+import { loadRSSData, updatePosts } from './loaders.js';
 
 const init = () => {
   const elements = {
@@ -10,13 +10,13 @@ const init = () => {
     input: document.querySelector('#url-input'),
     submitButton: document.querySelector('#submit-button'),
     feedback: document.querySelector('#feedback'),
-    feeds: document.querySelector('#feeds'),
-    posts: document.querySelector('#posts'),
+    feedsContainer: document.querySelector('#feeds'),
+    postsContainer: document.querySelector('#posts'),
     modal: document.querySelector('#modal'),
   };
   const state = {
     status: 'initializing', // success, error, sending
-    feedbackError: '',
+    feedbackError: null,
     inputValid: true,
     feedsURLs: [],
     feeds: [],
