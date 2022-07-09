@@ -126,31 +126,34 @@ const renderPosts = (posts, elements, i18n) => {
   postsContainer.append(cardBody, ul);
 };
 
-const watch = (state, i18n, elements) => onChange(state, (path, value) => {
-  switch (path) {
-    case 'feeds':
-      renderFeeds(value, elements, i18n);
-      break;
+const watch = (state, i18n, elements) => {
+  const watchedState = onChange(state, (path, value) => {
+    switch (path) {
+      case 'feeds':
+        renderFeeds(value, elements, i18n);
+        break;
 
-    case 'posts':
-      renderPosts(value, elements, i18n);
-      break;
+      case 'posts':
+        renderPosts(value, elements, i18n, watchedState);
+        break;
 
-    case 'status':
-      renderStatus(value, elements, i18n);
-      break;
+      case 'status':
+        renderStatus(value, elements, i18n);
+        break;
 
-    case 'inputValid':
-      renderValid(value, elements);
-      break;
+      case 'inputValid':
+        renderValid(value, elements);
+        break;
 
-    case 'feedbackError':
-      renderFeedback(value, elements, i18n);
-      break;
+      case 'feedbackError':
+        renderFeedback(value, elements, i18n);
+        break;
 
-    default:
-      break;
-  }
-});
+      default:
+        break;
+    }
+  });
+  return watchedState;
+};
 
 export default watch;
