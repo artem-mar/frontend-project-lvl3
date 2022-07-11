@@ -1,5 +1,13 @@
 import onChange from 'on-change';
 
+const renderFormValid = (state, elements) => {
+  if (state.form.status === 'valid') {
+    elements.input.classList.remove('is-invalid');
+  } else {
+    elements.input.classList.add('is-invalid');
+  }
+};
+
 const renderStatus = (value, elements, i18n) => {
   const { submitButton, input, feedback } = elements;
   if (value === 'sending') {
@@ -17,7 +25,7 @@ const renderStatus = (value, elements, i18n) => {
     elements.form.reset();
     elements.input.focus();
   }
-  if (value === 'error') {
+  if (value === 'error' || value === 'invalid') {
     submitButton.disabled = false;
     input.disabled = false;
     elements.feedback.classList.add('text-danger');
@@ -29,15 +37,7 @@ const renderFeedback = (value, elements, i18n) => {
   feedback.textContent = i18n.t(`feedback.${value}`);
 };
 
-const renderValid = (value, elements) => {
-  if (value === true) {
-    elements.input.classList.remove('is-invalid');
-  } else {
-    elements.input.classList.add('is-invalid');
-  }
-};
-
-const renderFeeds = (feeds, elements, i18n) => {
+const renderFeeds = (state, elements, i18n) => {
   const { feedsContainer } = elements;
   feedsContainer.innerHTML = '';
   const cardBody = document.createElement('div');
@@ -46,7 +46,7 @@ const renderFeeds = (feeds, elements, i18n) => {
   const ul = document.createElement('ul');
   ul.classList.add('list-group');
 
-  feeds.forEach((feed) => {
+  state.feeds.forEach((feed) => {
     const { title, description } = feed;
     const li = document.createElement('li');
     li.classList.add('list-group-item', 'p-2', 'px-3', 'border-0');
@@ -63,29 +63,18 @@ const renderFeeds = (feeds, elements, i18n) => {
   feedsContainer.append(cardBody, ul);
 };
 
-const createPostButton = (post, i18n) => {
-  const {
-    title, description, link,
-  } = post;
+const buildPostButton = (post, i18n) => {
+  const { id } = post;
   const button = document.createElement('button');
   button.classList.add('btn', 'btn-outline-primary', 'btn-sm', 'mb-auto');
   button.textContent = i18n.t('postButton');
   button.dataset.bsToggle = 'modal';
   button.dataset.bsTarget = '#modal';
-
-  button.addEventListener('click', () => {
-    const modal = document.querySelector('#modal');
-    const modalTitle = modal.querySelector('.modal-title');
-    const modalDescription = modal.querySelector('.modal-body p');
-    const modalButton = modal.querySelector('a.btn-primary');
-    modalTitle.textContent = title;
-    modalDescription.textContent = description;
-    modalButton.href = link;
-  });
+  button.dataset.id = id;
   return button;
 };
 
-const renderPosts = (posts, elements, i18n) => {
+const renderPosts = (state, elements, i18n) => {
   const { postsContainer } = elements;
   postsContainer.innerHTML = '';
   const cardBody = document.createElement('div');
@@ -94,10 +83,11 @@ const renderPosts = (posts, elements, i18n) => {
   const ul = document.createElement('ul');
   ul.classList.add('list-group');
 
-  [...posts].sort((a, b) => a.id - b.id)
+  const { viewedPostsId, postList } = state.posts;
+
+  [...postList].sort((a, b) => a.id - b.id)
     .forEach((post) => {
-      const { title, link } = post;
-      let { viewed } = post;
+      const { title, link, id } = post;
       const li = document.createElement('li');
       li.classList.add('list-group-item', 'px-3', 'd-flex', 'justify-content-between', 'border-0');
 
@@ -105,55 +95,62 @@ const renderPosts = (posts, elements, i18n) => {
       a.textContent = title;
       a.target = 'blank';
       a.href = link;
-      if (!viewed) {
-        a.classList.add('fw-bold');
-      } else {
+      a.dataset.id = id;
+      if (viewedPostsId.includes(id)) {
         a.classList.add('fw-normal', 'link-secondary');
+      } else {
+        a.classList.add('fw-bold');
       }
-      const postButton = createPostButton(post, i18n);
-      [a, postButton].forEach((el) => {
-        el.addEventListener('click', () => {
-          a.classList.remove('fw-bold');
-          a.classList.add('fw-normal', 'link-secondary');
-          viewed = true;
-        });
-      });
-
-      li.append(a);
-      li.append(postButton);
+      const postButton = buildPostButton(post, i18n);
+      li.append(a, postButton);
       ul.prepend(li);
     });
   postsContainer.append(cardBody, ul);
 };
 
-const watch = (state, i18n, elements) => {
-  const watchedState = onChange(state, (path, value) => {
-    switch (path) {
-      case 'feeds':
-        renderFeeds(value, elements, i18n);
-        break;
-
-      case 'posts':
-        renderPosts(value, elements, i18n, watchedState);
-        break;
-
-      case 'status':
-        renderStatus(value, elements, i18n);
-        break;
-
-      case 'inputValid':
-        renderValid(value, elements);
-        break;
-
-      case 'feedbackError':
-        renderFeedback(value, elements, i18n);
-        break;
-
-      default:
-        break;
-    }
-  });
-  return watchedState;
+const renderModal = (state, elements) => {
+  const { modal } = elements;
+  const modalTitle = modal.querySelector('.modal-title');
+  const modalDescription = modal.querySelector('.modal-body p');
+  const modalButton = modal.querySelector('a.btn-primary');
+  const { modalData: { title, description, link } } = state;
+  modalTitle.textContent = title;
+  modalDescription.textContent = description;
+  modalButton.href = link;
 };
+
+const watch = (state, i18n, elements) => onChange(state, (path, value) => {
+  switch (path) {
+    case 'form.status':
+      renderFormValid(state, elements);
+      renderStatus(value, elements, i18n);
+      break;
+
+    case 'form.error':
+    case 'loading.error':
+      renderFeedback(value, elements, i18n);
+      break;
+
+    case 'loading.status':
+      renderStatus(value, elements, i18n);
+      break;
+
+    case 'feeds':
+      renderFeeds(state, elements, i18n);
+      break;
+
+    case 'posts.postList':
+    case 'posts.viewedPostsId':
+      renderPosts(state, elements, i18n);
+      break;
+
+    case 'modalData':
+      renderModal(state, elements);
+      break;
+
+    default:
+      break;
+  }
+});
 
 export default watch;
