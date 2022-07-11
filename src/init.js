@@ -3,29 +3,9 @@ import i18next from 'i18next';
 import * as yup from 'yup';
 import axios from 'axios';
 import _ from 'lodash';
-import watch from './watchers.js';
 import resources from './locale/index.js';
-
-const RSSParse = (data) => {
-  const feedTitle = data.querySelector('title').textContent;
-  const feedDescription = data.querySelector('description').textContent;
-  const feed = { title: feedTitle, description: feedDescription };
-
-  const posts = [...data.querySelectorAll('item')].reverse()
-    .map((post) => {
-      const title = post.querySelector('title').textContent;
-      const description = post.querySelector('description').textContent;
-      const link = post.querySelector('link').textContent;
-
-      return {
-        title,
-        description,
-        link,
-      };
-    });
-
-  return { feed, posts };
-};
+import RSSParse from './parser.js';
+import watch from './watchers.js';
 
 const buildUrl = (url) => {
   const newUrl = new URL('https://allorigins.hexlet.app/get?disableCache=true');
