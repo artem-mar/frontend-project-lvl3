@@ -22,10 +22,10 @@ const loadRSSData = (state, url) => {
       const parsedData = RSSParse(data);
       const { feed, posts } = parsedData;
       const numberedPosts = posts.map((post) => ({ ...post, id: _.uniqueId() }));
+      feed.url = url;
       state.feeds.push(feed);
       state.posts.push(...numberedPosts);
       state.loading.status = 'success';
-      state.feedsURLs.push(url);
     })
     .catch((e) => { // parser and loader error handling
       if (e.name === 'TypeError') { // parser error
@@ -38,7 +38,7 @@ const loadRSSData = (state, url) => {
 };
 
 const updatePosts = (state) => {
-  const urls = Array.from(state.feedsURLs);
+  const urls = state.feeds.map(({ url }) => url);
   const promises = urls.map((url) => axios.get(buildUrl(url))
     .then((response) => {
       const parser = new DOMParser();
@@ -76,6 +76,7 @@ const init = () => {
     postsContainer: document.querySelector('#posts'),
     modal: document.querySelector('#modal'),
   };
+
   const state = {
     form: {
       status: 'valid',
@@ -85,14 +86,12 @@ const init = () => {
       status: 'success',
       error: null,
     },
-
-    feedsURLs: [],
-    feeds: [],
-    posts: [],
     uiState: {
       viewedPostsId: new Set(),
       modalPostId: '',
     },
+    feeds: [],
+    posts: [],
   };
 
   const i18n = i18next.createInstance();
@@ -106,7 +105,6 @@ const init = () => {
     elements.postsContainer.addEventListener('click', (e) => {
       const { id } = e.target.dataset;
       if (!id) { return; }
-
       const { viewedPostsId } = watchedState.uiState;
       viewedPostsId.add(id);
       watchedState.uiState.modalPostId = id;
@@ -116,8 +114,9 @@ const init = () => {
       e.preventDefault();
       const formData = new FormData(e.target);
       const inputValue = formData.get('url').trim();
+      const feedsURLs = watchedState.feeds.map(({ url }) => url);
 
-      validate(inputValue, watchedState.feedsURLs)
+      validate(inputValue, feedsURLs)
         .then((url) => {
           watchedState.form.status = 'valid';
           loadRSSData(watchedState, url); // loading
