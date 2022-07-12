@@ -83,9 +83,9 @@ const renderPosts = (state, elements, i18n) => {
   const ul = document.createElement('ul');
   ul.classList.add('list-group');
 
-  const { viewedPostsId, postList } = state.posts;
+  const { uiState: { viewedPostsId }, posts } = state;
 
-  [...postList].sort((a, b) => a.id - b.id)
+  [...posts].sort((a, b) => a.id - b.id)
     .forEach((post) => {
       const { title, link, id } = post;
       const li = document.createElement('li');
@@ -96,7 +96,7 @@ const renderPosts = (state, elements, i18n) => {
       a.target = 'blank';
       a.href = link;
       a.dataset.id = id;
-      if (viewedPostsId.includes(id)) {
+      if (viewedPostsId.has(id)) {
         a.classList.add('fw-normal', 'link-secondary');
       } else {
         a.classList.add('fw-bold');
@@ -113,7 +113,9 @@ const renderModal = (state, elements) => {
   const modalTitle = modal.querySelector('.modal-title');
   const modalDescription = modal.querySelector('.modal-body p');
   const modalButton = modal.querySelector('a.btn-primary');
-  const { modalData: { title, description, link } } = state;
+  const { modalPostId } = state.uiState;
+  const activePost = state.posts.find(({ id }) => id === modalPostId);
+  const { title, description, link } = activePost;
   modalTitle.textContent = title;
   modalDescription.textContent = description;
   modalButton.href = link;
@@ -139,12 +141,12 @@ const watch = (state, i18n, elements) => onChange(state, (path, value) => {
       renderFeeds(state, elements, i18n);
       break;
 
-    case 'posts.postList':
-    case 'posts.viewedPostsId':
+    case 'posts':
+    case 'uiState.viewedPostsId':
       renderPosts(state, elements, i18n);
       break;
 
-    case 'modalData':
+    case 'uiState.modalPostId':
       renderModal(state, elements);
       break;
 

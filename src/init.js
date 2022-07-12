@@ -23,7 +23,7 @@ const loadRSSData = (state, url) => {
       const { feed, posts } = parsedData;
       const numberedPosts = posts.map((post) => ({ ...post, id: _.uniqueId() }));
       state.feeds.push(feed);
-      state.posts.postList.push(...numberedPosts);
+      state.posts.push(...numberedPosts);
       state.loading.status = 'success';
       state.feedsURLs.push(url);
     })
@@ -45,10 +45,10 @@ const updatePosts = (state) => {
       const data = parser.parseFromString(response.data.contents, 'text/xml');
       const parsedData = RSSParse(data);
       const { posts } = parsedData;
-      let uniquePosts = _.differenceBy(posts, state.posts.postList, 'title');
+      let uniquePosts = _.differenceBy(posts, state.posts, 'title');
       if (uniquePosts.length !== 0) {
         uniquePosts = uniquePosts.map((post) => ({ ...post, id: _.uniqueId() }));
-        state.posts.postList.push(...uniquePosts);
+        state.posts.push(...uniquePosts);
       }
     }));
   Promise.all(promises).finally(() => setTimeout(updatePosts, 5000, state));
@@ -81,7 +81,6 @@ const init = () => {
       status: 'valid',
       error: null,
     },
-
     loading: {
       status: 'success',
       error: null,
@@ -89,11 +88,11 @@ const init = () => {
 
     feedsURLs: [],
     feeds: [],
-    posts: {
-      postList: [],
-      viewedPostsId: [],
+    posts: [],
+    uiState: {
+      viewedPostsId: new Set(),
+      modalPostId: '',
     },
-    modalData: {},
   };
 
   const i18n = i18next.createInstance();
@@ -106,13 +105,11 @@ const init = () => {
 
     elements.postsContainer.addEventListener('click', (e) => {
       const { id } = e.target.dataset;
-      const { viewedPostsId } = watchedState.posts;
-      if (!viewedPostsId.includes(id)) {
-        viewedPostsId.push(id);
-      }
-      if (e.target.tagName === 'BUTTON') {
-        watchedState.modalData = watchedState.posts.postList.find((post) => post.id === id);
-      }
+      if (!id) { return; }
+
+      const { viewedPostsId } = watchedState.uiState;
+      viewedPostsId.add(id);
+      watchedState.uiState.modalPostId = id;
     });
 
     elements.form.addEventListener('submit', (e) => {
