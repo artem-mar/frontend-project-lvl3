@@ -66,7 +66,7 @@ const renderFeeds = (state, elements, i18n) => {
 const buildPostButton = (post, i18n) => {
   const { id } = post;
   const button = document.createElement('button');
-  button.classList.add('btn', 'btn-outline-primary', 'btn-sm', 'mb-auto');
+  button.classList.add('btn', 'btn-outline-primary', 'btn-sm', 'ms-3');
   button.textContent = i18n.t('postButton');
   button.dataset.bsToggle = 'modal';
   button.dataset.bsTarget = '#modal';
@@ -89,7 +89,7 @@ const renderPosts = (state, elements, i18n) => {
     .forEach((post) => {
       const { title, link, id } = post;
       const li = document.createElement('li');
-      li.classList.add('list-group-item', 'px-3', 'd-flex', 'justify-content-between', 'border-0');
+      li.classList.add('list-group-item', 'px-3', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0');
 
       const a = document.createElement('a');
       a.textContent = title;
