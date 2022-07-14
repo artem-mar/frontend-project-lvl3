@@ -1,9 +1,11 @@
 export default (data) => {
-  const feedTitle = data.querySelector('title').textContent;
-  const feedDescription = data.querySelector('description').textContent;
+  const parser = new DOMParser();
+  const parsedData = parser.parseFromString(data, 'text/xml');
+  const feedTitle = parsedData.querySelector('title').textContent;
+  const feedDescription = parsedData.querySelector('description').textContent;
   const feed = { title: feedTitle, description: feedDescription };
 
-  const posts = [...data.querySelectorAll('item')].reverse()
+  const posts = [...parsedData.querySelectorAll('item')].reverse()
     .map((post) => {
       const title = post.querySelector('title').textContent;
       const description = post.querySelector('description').textContent;

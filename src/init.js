@@ -17,9 +17,7 @@ const loadRSSData = (state, url) => {
   state.loading.status = 'sending';
   axios.get(buildUrl(url))
     .then((response) => {
-      const parser = new DOMParser();
-      const data = parser.parseFromString(response.data.contents, 'text/xml');
-      const parsedData = RSSParse(data);
+      const parsedData = RSSParse(response.data.contents);
       const { feed, posts } = parsedData;
       const numberedPosts = posts.map((post) => ({ ...post, id: _.uniqueId() }));
       feed.url = url;
@@ -41,9 +39,7 @@ const updatePosts = (state) => {
   const urls = state.feeds.map(({ url }) => url);
   const promises = urls.map((url) => axios.get(buildUrl(url))
     .then((response) => {
-      const parser = new DOMParser();
-      const data = parser.parseFromString(response.data.contents, 'text/xml');
-      const parsedData = RSSParse(data);
+      const parsedData = RSSParse(response.data.contents);
       const { posts } = parsedData;
       let uniquePosts = _.differenceBy(posts, state.posts, 'title');
       if (uniquePosts.length !== 0) {
