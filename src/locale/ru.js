@@ -7,7 +7,6 @@ export default {
       'url must not be empty': 'Не должно быть пустым',
       'Network Error': 'Ошибка сети',
       notContainRSS: 'Ресурс не содержит валидный RSS',
-
     },
     feeds: 'Фиды',
     posts: 'Посты',

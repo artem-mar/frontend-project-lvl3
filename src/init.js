@@ -15,6 +15,7 @@ const buildUrl = (url) => {
 
 const loadRSSData = (state, url) => {
   state.loading.status = 'sending';
+  state.loading.error = null;
   axios.get(buildUrl(url))
     .then((response) => {
       const parsedData = RSSParse(response.data.contents);

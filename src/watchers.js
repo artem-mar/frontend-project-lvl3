@@ -34,7 +34,7 @@ const renderStatus = (value, elements, i18n) => {
 
 const renderFeedback = (value, elements, i18n) => {
   const { feedback } = elements;
-  feedback.textContent = i18n.t(`feedback.${value}`);
+  feedback.textContent = value ? i18n.t(`feedback.${value}`) : '';
 };
 
 const renderFeeds = (state, elements, i18n) => {
