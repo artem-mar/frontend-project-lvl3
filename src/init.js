@@ -27,10 +27,10 @@ const loadRSSData = (state, url) => {
       state.loading.status = 'success';
     })
     .catch((e) => { // parser and loader error handling
-      if (e.name === 'TypeError') { // parser error
-        state.loading.error = 'notContainRSS';
+      if (e.name === 'TypeError') {
+        state.loading.error = 'something wrong';
       } else {
-        state.loading.error = e.message;
+        state.loading.error = e.message; // parser/axios error
       }
       state.loading.status = 'error';
     });
